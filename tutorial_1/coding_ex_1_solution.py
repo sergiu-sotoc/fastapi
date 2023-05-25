@@ -37,7 +37,11 @@ class Post(BaseModel):
 comments = [
     Comment(author="johndoe",
     comment="This is a comment!",
-    likes=2)]
+    likes=2),
+    Comment(author="janedoe",
+    comment="This is a second comment!",
+    likes=3)
+]
 
 post = Post(author="johndoe",
 co_author="janedoe",
@@ -47,3 +51,6 @@ content="Cool content",
 id=10101,
 likes=["johndoe","janedoe"],
 comments=comments)
+
+print(post)
+print(post.comments[0].author)
