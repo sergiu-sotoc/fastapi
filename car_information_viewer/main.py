@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Query, Path, HTTPException, status, Body, Request
 from fastapi.encoders import jsonable_encoder
+from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
@@ -21,9 +22,29 @@ class Car(BaseModel):
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-@app.get("/", response_class=HTMLResponse)
+# @app.get("/", response_class=HTMLResponse)
+# def root(request: Request):
+#     return templates.TemplateResponse("home.html", {"request": request, "title": "FastAPI home"})
+@app.get("/", response_class=RedirectResponse)
 def root(request: Request):
-    return templates.TemplateResponse("home.html", {"request": request, "title": "FastAPI home"})
+    return RedirectResponse(url="/cars")
+
+# @app.get("/cars", response_model=List[Dict[str, Car]])
+# def get_cars(number: Optional[str] = Query("10",max_length=3)):
+#     response = []
+#     for id, car in list(cars.items())[:int(number)]:
+#         to_add = {}
+#         to_add[id] = car
+#         response.append(to_add)
+#     return response
+@app.get("/cars", response_class=HTMLResponse)
+def get_cars(request: Request, number: Optional[str] = Query("10",max_length=3)):
+    response = []
+    for id, car in list(cars.items())[:int(number)]:
+        to_add = {}
+        to_add[id] = car
+        response.append(to_add)
+    return templates.TemplateResponse("index.html", {"request": request, "cars": response, "title": "Home"})
 
 @app.get("/cars", response_model=List[Dict[str, Car]])
 def get_cars(number: Optional[str] = Query("10",max_length=3)):
